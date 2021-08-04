@@ -1,0 +1,126 @@
+ion-toolbar, ion-list{
+  --background: transparent;
+  --ion-background-color: transparent;
+  background-color: transparent;
+}
+
+
+#container{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 1;
+}
+.bg-img{
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  width: 100%;
+  height: 100%;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+button{
+  --background: var(--ion-color-danger);
+  --ion-background-color: var(--ion-color-danger);
+  background-color: var(--ion-color-danger);
+  color: #fff;
+  border-radius: 50%;
+  padding: 10px;
+  font-size: 12px;
+}
+ion-buttons{
+  margin-top: 20px;
+}
+.track-info{
+  text-align: left;
+  display: inline-block;
+  h3,p{
+    --background: #000;
+  --ion-background-color: #000;
+  background-color: #000;
+  color: #fff;
+  text-align: left;
+  padding: 5px;
+  }
+  p{
+    margin-top: -1%;
+  }
+  
+}
+.list-content{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  // #freq{
+  //   width: 300px!important;
+  //   height: 500px!important;
+  //   p{
+  //     position: absolute;
+  //     top: 25%;
+  //     left: 45%;
+  //   }
+  // }
+
+  .controls{
+    display: flex!important;
+    justify-content: space-between;
+    align-content: space-between;
+    button{
+      background-color: transparent;
+      font-size: 12pt;
+    }
+  }
+  .avatar-box{
+    width: 150px!important;
+    height: 150px!important;
+
+    .circle-inner{
+      position: absolute;
+      top: 30%;
+      left: 45%;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      --background: var(--ion-black-color);
+      --ion-background-color: var(--ion-black-color);
+      background-color: var(--ion-black-color);
+      -webkit-box-shadow: inset 2px 0px 5px -9px rgba(255, 255, 255, 0.144);
+      -moz-box-shadow: inset 2px 0px 5px -9px rgba(255, 255, 255, 0.144);
+      box-shadow: inset 2px 0px 5px -9px rgba(255,255,255,0.144);
+      // display: none;
+    }
+    img{
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+      animation: rotation 3s infinite linear;
+    }
+  }
+}
+.playerControls{
+  --background: red;
+  --ion-background-color: red;
+  ion-button{
+    --color: #fff;
+    --ion-color: #fff;
+    color: #fff;
+  }
+}
+.range-bar.range-bar-active{
+  --background: #fff!important;
+  --ion-background-color: #fff!important;
+  background-color: #fff!important;
+}
+@keyframes rotation {
+  from {
+      -webkit-transform: rotate(0deg);
+  }
+  to {
+      -webkit-transform: rotate(359deg);
+  }
+}

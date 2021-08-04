@@ -1,0 +1,54 @@
+<br><br><br><br>
+<ion-toolbar>
+  <ion-searchbar></ion-searchbar>
+</ion-toolbar>
+<ion-content class="ion-padding">
+<h4 class="ion-padding-horizontal">Popular</h4>
+
+<div class="category-container">
+  <button *ngFor="let item of category" color="danger" shape="round" class="categoryBtn" >#{{ item.name }}</button>
+</div>
+<br>
+<ion-slides [options]="slideOptsThumbs" class="ion-slides">
+  <ion-slide class="ion-slide" *ngFor="let track of tracks" (click)="presentModal(track)" button>
+    <ion-card class="ion-text-start">
+      <img [src]="track.cover_url" alt="">
+      <ion-card-content>
+        <span class="sld-inf">{{ track.artist_name }} - {{ track.album_name }}</span>
+      </ion-card-content>
+    </ion-card>
+  </ion-slide>
+</ion-slides>
+
+<h4 class="ion-padding-horizontal">All Musics</h4>
+<ion-list class="all-music-list">
+  <ion-item  *ngFor="let track of tracks">
+
+    <ion-card button class="ion-text-start" (click)="presentModal(track)"> 
+      <img [src]="track.cover_url" alt="">
+      <ion-card-content>
+        <h5>{{ track.artist_name }}</h5>
+        <ion-label color="track == activeTrack ? 'success' : 'danger'">{{ track.album_name }}</ion-label>
+      </ion-card-content>
+    </ion-card>
+
+  </ion-item>
+</ion-list>
+<!-- <canvas id="freq" width="200" height="200"></canvas> -->
+</ion-content>
+
+<ion-footer *ngIf="isReturn" color="danger" (click)="presentModal(track)"> 
+  <ion-list color="danger">
+    <div class="player-small">
+      <ion-item color="danger">
+        <ion-avatar slot="start" >
+          <img [src]="track.cover_url">
+        </ion-avatar>
+        <ion-label >
+          <h3>{{ track.artist_name }} </h3>
+          <p>{{ track.album_name }}</p>
+        </ion-label>
+      </ion-item>
+    </div>
+  </ion-list>
+</ion-footer> 

@@ -1,0 +1,65 @@
+<ion-content padding >
+  <div class="bg-img"  [style.backgroundImage]="'url(' + track.cover_url + ')'"></div>
+  <div id="container">
+    <ion-toolbar>
+      <ion-buttons slot="end">
+        <button ion-button icon-only color="danger" shape="round" (click)="dismiss()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-toolbar>
+    <div class="track-info">
+      <h3>{{ track.artist_name }}</h3> 
+      <p>{{ track.album_name }}</p>
+    </div>
+    
+    <ion-list center class="list-content">
+  
+      <!-- <canvas id="freq" width="200" height="200"></canvas> -->
+      <div class="avatar-box">
+        <img [src]="track.cover_url" [ngStyle]="{'animation': spinning}">
+        <!-- <div class="circle-inner"></div> -->
+      </div>
+      <ion-grid>
+        <ion-row>
+  
+          <ion-col size="12">
+            <ion-range #range ([ngModel])="progress" value="{{progress}}" min="0" max="100" color="light" (touchend)="seek()" (mouseup)="seek()">
+            </ion-range>
+          </ion-col>
+          <ion-col size="12" class="controls">
+              <button>
+                <ion-icon name="repeat-outline"></ion-icon>
+              </button>        
+              <button>
+                <ion-icon name="volume-high-outline"></ion-icon>
+              </button>        
+              <button (click)="presentActionSheet()">
+                <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+              </button>
+            </ion-col>
+          <ion-col size="12" class="ion-text-center playerControls">
+            
+            <ion-button fill="clear" (click)="prev()" color="light">
+              <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+            </ion-button>
+      
+            <ion-button fill="clear" (click)="togglePlayer(false)" *ngIf="!isPlaying" color="light">
+              <ion-icon slot="icon-only" name="play"></ion-icon>
+            </ion-button>
+      
+            <ion-button fill="clear" (click)="togglePlayer(true)" *ngIf="isPlaying" color="light">
+              <ion-icon slot="icon-only" name="pause"></ion-icon>
+            </ion-button>
+      
+            <ion-button fill="clear" (click)="next()" color="light">
+              <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+            </ion-button>
+      
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-list>
+  
+  </div>
+  </ion-content>

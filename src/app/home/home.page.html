@@ -1,0 +1,55 @@
+<ion-menu side="start" content-id="main-content">
+  <!-- <ion-header>
+    <ion-toolbar translucent>
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header> -->
+  <ion-content>
+
+    <div class="profile-card">
+      <img src="https://i.pravatar.cc/150?img=30" /> <br>
+        <ion-card-title>Alina Roger</ion-card-title>
+    </div>
+    <br>
+    <ion-list>
+      <ion-item>
+        <ion-button color="danger" shape="round" expand="block">PROFILE</ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-button color="danger" shape="round" expand="block">FAVORITES</ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-button color="danger" shape="round" expand="block">ARTISTS</ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-button color="danger" shape="round" expand="block">ALBUMS</ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-button color="danger" shape="round" expand="block">PLAYLISTS</ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-button color="danger" shape="round" expand="block">POPULAR</ion-button>
+      </ion-item>      
+      <ion-item>
+        <ion-button color="danger" shape="round" expand="block">SETTINGS</ion-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<div class="ion-page" id="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title class="ion-title">Sound Player</ion-title>
+      <ion-avatar slot="end" class="ion-avatar">
+        <img src="https://i.pravatar.cc/150?img=30">
+      </ion-avatar>
+    </ion-toolbar>
+  </ion-header>
+
+    <ion-router-outlet></ion-router-outlet>
+
+</div>
