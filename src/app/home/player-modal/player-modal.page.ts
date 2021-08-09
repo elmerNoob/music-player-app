@@ -23,6 +23,7 @@ export class PlayerModalPage implements OnInit {
   spinning = 'none';
   prog = 0;
   currentVolume: string = "";
+  repeat = false;
   
   @ViewChild('range', { static: false }) range: IonRange;
   
@@ -65,13 +66,25 @@ export class PlayerModalPage implements OnInit {
       },
       onend: () => {
         console.log('finished');
-        this.next();
+        console.log(this.repeat);
+        if (this.repeat == true) {
+          this.start(this.track);
+          this.repeat = false;
+        } else {
+          this.next();
+        }
       }
     });
 
     this.player.play();
   }
   
+  repeatTrack() {
+    // console.log('repeat');
+    this.repeat = true;
+    
+  }
+
   togglePlayer(pause){
     
     this.isPlaying = !pause;
