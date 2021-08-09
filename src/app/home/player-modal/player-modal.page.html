@@ -31,8 +31,9 @@
               <button>
                 <ion-icon name="repeat-outline"></ion-icon>
               </button>        
-              <button>
-                <ion-icon name="volume-high-outline"></ion-icon>
+              <button (click)="setCurrentVolume()">
+                <ion-icon name="volume-high-outline" ></ion-icon>
+                <div>{{currentVolume}}</div>
               </button>        
               <button (click)="presentActionSheet()">
                 <ion-icon name="ellipsis-horizontal-outline"></ion-icon>

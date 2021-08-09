@@ -2,6 +2,7 @@ import { Track } from './../../models/track.interface';
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { NavParams, ModalController, IonRange,ActionSheetController  } from '@ionic/angular';
 import { Howl } from 'howler';
+import { AudioManagement } from '@ionic-native/audio-management/ngx';
 // import * as $ from "jquery";
 declare var playSample;
 @Component({
@@ -15,13 +16,13 @@ export class PlayerModalPage implements OnInit {
   @Input() playlist: any;
   // @Input() controls;
   // @Input() spectrum;
-  activeTrack : Track = null;
+  activeTrack : any;
   player: Howl = null;
   isPlaying: boolean = false;
   progress = 0;
   spinning = 'none';
   prog = 0;
-  count = 0;
+  currentVolume: string = "";
   
   @ViewChild('range', { static: false }) range: IonRange;
   
@@ -29,7 +30,8 @@ export class PlayerModalPage implements OnInit {
     navParams: NavParams, 
     public modalController: ModalController,
     private elementRef: ElementRef,
-    public actionSheetController: ActionSheetController) {
+    public actionSheetController: ActionSheetController,
+    public audioman: AudioManagement) {
     // console.log(navParams.get('track'));
   }
 
@@ -37,7 +39,7 @@ export class PlayerModalPage implements OnInit {
     // this.scripts();
     // this.playSong();
     this.spinning = 'rotation 3s infinite linear';
-    this.start(this.track)
+    this.start(this.track);
   }
 
   setCurrentTrack(track) {
@@ -45,13 +47,13 @@ export class PlayerModalPage implements OnInit {
   }​
 
   dismiss() {
-    this.modalController.dismiss(this.track)
+    this.modalController.dismiss(this.track);
   }
   
-  start(track: Track) {
+  start(track: any) {
     if (this.player) {
       this.player.stop();
-    }​
+    }
     this.player = new Howl({
       src: [this.track.song_url],
       html5: true,  
@@ -71,9 +73,9 @@ export class PlayerModalPage implements OnInit {
   }
   
   togglePlayer(pause){
-
-    this.isPlaying = !pause;
     
+    this.isPlaying = !pause;
+
     if(pause){
       this.player.pause();
       this.spinning = 'none';
@@ -122,6 +124,22 @@ export class PlayerModalPage implements OnInit {
     setTimeout(()=>{
       this.updateProgress();
     },1000);
+  }
+
+  setCurrentVolume(){
+    this.audioman.getMaxVolume(AudioManagement.VolumeType.MUSIC).then(
+      (maxVolume) => {
+        this.audioman.setVolume(AudioManagement.VolumeType.MUSIC, maxVolume.maxVolume/2).then(
+          () => {
+
+          },(err) => {
+            alert(JSON.stringify(err));
+          }
+        ),(err) => {
+          alert(JSON.stringify(err));
+        }
+      }
+    )
   }
 
   async presentActionSheet() {
