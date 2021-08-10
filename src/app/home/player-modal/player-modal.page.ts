@@ -15,7 +15,7 @@ export class PlayerModalPage implements OnInit {
   @Input() track: any;
   @Input() playlist: any;
   @Input() player: any; 
-  @Input() progress: any; 
+  // @Input() progress: any; 
   
 
   // @Input() controls;
@@ -23,7 +23,7 @@ export class PlayerModalPage implements OnInit {
   activeTrack : any;
   // player: Howl = null;
   isPlaying: boolean = false;
-  // progress = 0;
+  progress = 0;
   spinning = 'none';
   prog = 0;
   currentVolume: string = "";
@@ -79,7 +79,7 @@ export class PlayerModalPage implements OnInit {
       // console.log(this.player);
       // this.player.play();
       this.player.stop();
-    } else {
+    }
       this.player = new Howl({
         src: [this.track.song_url],
         html5: true,
@@ -102,7 +102,7 @@ export class PlayerModalPage implements OnInit {
       });
 
       this.player.play();
-    }
+    
   }
   
   repeatTrack() {
