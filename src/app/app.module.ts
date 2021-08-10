@@ -12,14 +12,21 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
+import { AudioManagement} from '@ionic-native/audio-management/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HomePageModule,HttpClientModule,Ng2SearchPipeModule],
+  imports: [BrowserModule, IonicModule.forRoot(),
+    AppRoutingModule,
+    HomePageModule,
+    HttpClientModule,
+    Ng2SearchPipeModule],
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    AudioManagement
   ],
   bootstrap: [AppComponent]
 })

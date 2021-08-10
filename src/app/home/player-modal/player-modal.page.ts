@@ -14,12 +14,16 @@ export class PlayerModalPage implements OnInit {
 
   @Input() track: any;
   @Input() playlist: any;
+  @Input() player: any; 
+  @Input() progress: any; 
+  
+
   // @Input() controls;
   // @Input() spectrum;
   activeTrack : any;
-  player: Howl = null;
+  // player: Howl = null;
   isPlaying: boolean = false;
-  progress = 0;
+  // progress = 0;
   spinning = 'none';
   prog = 0;
   currentVolume: string = "";
@@ -41,6 +45,8 @@ export class PlayerModalPage implements OnInit {
     // this.playSong();
     this.spinning = 'rotation 3s infinite linear';
     this.start(this.track);
+    // this.resume();
+    console.log(this.playlist);
   }
 
   setCurrentTrack(track) {
@@ -48,35 +54,55 @@ export class PlayerModalPage implements OnInit {
   }​
 
   dismiss() {
-    this.modalController.dismiss(this.track);
-  }
-  
-  start(track: any) {
-    if (this.player) {
-      this.player.stop();
-    }
-    this.player = new Howl({
-      src: [this.track.song_url],
-      html5: true,  
-      onplay: () => {
-        console.log('onplay');
-        this.isPlaying = true;
-        this.activeTrack = track;
-        this.updateProgress();
-      },
-      onend: () => {
-        console.log('finished');
-        console.log(this.repeat);
-        if (this.repeat == true) {
-          this.start(this.track);
-          this.repeat = false;
-        } else {
-          this.next();
-        }
-      }
+    this.modalController.dismiss({
+      track: this.activeTrack,
+      trackPlaying: this.isPlaying,
+      play: this.player,
+      prog: this.progress
     });
+  }
 
-    this.player.play();
+  // resume() {
+  //   if (this.player) {
+  //     this.player.seek(this.progress);
+  //     this.player.play();
+  //     // this.start();
+  //   } else {
+  //     this.start(this.track);
+  //   }
+  // }
+  
+  start(track) {
+
+    if (this.player) {
+      // this.player.seek(this.progress);
+      // console.log(this.player);
+      // this.player.play();
+      this.player.stop();
+    } else {
+      this.player = new Howl({
+        src: [this.track.song_url],
+        html5: true,
+        onplay: () => {
+          console.log('onplay');
+          this.isPlaying = true;
+          this.activeTrack = track;
+          this.updateProgress();
+        },
+        onend: () => {
+          console.log('finished');
+          console.log(this.repeat);
+          if (this.repeat == true) {
+            this.start(this.track);
+            this.repeat = false;
+          } else {
+            this.next();
+          }
+        }
+      });
+
+      this.player.play();
+    }
   }
   
   repeatTrack() {
@@ -105,7 +131,8 @@ export class PlayerModalPage implements OnInit {
     if(index != this.playlist.length - 1){
       this.track = this.playlist[index + 1]; 
       this.start(this.track);
-    }else{
+    } else {
+      this.track = this.playlist[this.playlist.length - this.playlist.length];
       this.start(this.track);
     }
   }

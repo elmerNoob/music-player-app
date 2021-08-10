@@ -206,13 +206,23 @@ export class MainPage implements OnInit {
   //   // console.log(this.obj);
   //   console.log(this.myArray);  
   // }
+  somethingsPlaying = false;
+  fromModal = null;
+  progress = 0;
   async presentModal(track: Track) {
-    
+    if (this.fromModal == null) {
+      this.fromModal = null;
+    } else {
+      this.fromModal = this.fromModal;
+    }
+
     const modal = await this.modalController.create({
       component: PlayerModalPage,
       componentProps: {
         'track': track,
-        'playlist': this.tracks
+        'playlist': this.tracks,
+        'player': this.fromModal,
+        'progress': this.progress
       }
     });
 
@@ -220,7 +230,10 @@ export class MainPage implements OnInit {
       .then((data) => {
         // const user = data['data']; // Here's your selected user!
         this.isReturn = true;
-        this.track = data['data'];
+        this.track = data['data'].track;
+        this.somethingsPlaying = data['data'].trackPlaying;
+        this.fromModal = data['data'].play;
+        this.progress = data['data'].prog;
     });
 
     return await modal.present();
