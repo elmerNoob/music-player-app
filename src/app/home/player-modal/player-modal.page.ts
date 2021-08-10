@@ -3,6 +3,8 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { NavParams, ModalController, IonRange,ActionSheetController  } from '@ionic/angular';
 import { Howl } from 'howler';
 import { AudioManagement } from '@ionic-native/audio-management/ngx';
+import { ToastController } from '@ionic/angular';
+
 // import * as $ from "jquery";
 declare var playSample;
 @Component({
@@ -31,13 +33,22 @@ export class PlayerModalPage implements OnInit {
   
   @ViewChild('range', { static: false }) range: IonRange;
   
+  
   constructor(
     navParams: NavParams, 
     public modalController: ModalController,
     private elementRef: ElementRef,
     public actionSheetController: ActionSheetController,
-    public audioman: AudioManagement) {
+    public audioman: AudioManagement,
+    public toastController: ToastController) {
     // console.log(navParams.get('track'));
+  }
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'This song will be repeated',
+      duration: 2000
+    });
+    toast.present();
   }
 
   ngOnInit() {
@@ -107,6 +118,7 @@ export class PlayerModalPage implements OnInit {
   
   repeatTrack() {
     // console.log('repeat');
+    this.presentToast();
     this.repeat = true;
     
   }
