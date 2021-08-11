@@ -62,7 +62,7 @@ export class PlayerModalPage implements OnInit {
     // this.playSong();
     this.spinning = 'rotation 3s infinite linear';
     // this.start(this.track);
-    this.resume();
+    // this.resume();
     console.log(this.playlist);
   }
 
