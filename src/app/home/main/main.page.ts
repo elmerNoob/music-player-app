@@ -97,6 +97,7 @@ export class MainPage implements OnInit {
         this.somethingsPlaying = data['data'].trackPlaying;
         this.fromModal = data['data'].play;
         this.progress = data['data'].prog;
+        console.log(this.progress);
     });
 
     return await modal.present();

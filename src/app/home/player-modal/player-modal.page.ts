@@ -1,6 +1,6 @@
 import { Track } from './../../models/track.interface';
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { NavParams, ModalController, IonRange,ActionSheetController  } from '@ionic/angular';
+import { Platform, NavParams, ModalController, IonRange,ActionSheetController  } from '@ionic/angular';
 import { Howl } from 'howler';
 import { AudioManagement } from '@ionic-native/audio-management/ngx';
 import { ToastController } from '@ionic/angular';
@@ -17,7 +17,7 @@ export class PlayerModalPage implements OnInit {
   @Input() track: any;
   @Input() playlist: any;
   @Input() player: any; 
-  // @Input() progress: any; 
+  @Input() progress: any; 
   
 
   // @Input() controls;
@@ -25,7 +25,7 @@ export class PlayerModalPage implements OnInit {
   activeTrack : any;
   // player: Howl = null;
   isPlaying: boolean = false;
-  progress = 0;
+  // progress = 0;
   spinning = 'none';
   prog = 0;
   currentVolume: string = "";
@@ -40,9 +40,15 @@ export class PlayerModalPage implements OnInit {
     private elementRef: ElementRef,
     public actionSheetController: ActionSheetController,
     public audioman: AudioManagement,
-    public toastController: ToastController) {
-    // console.log(navParams.get('track'));
-  }
+    public toastController: ToastController,
+
+    // public platform: Platform
+  ) {
+      // this.platform.backButton.subscribeWithPriority(10, () => {
+      //   this.dismiss();
+      // });
+    }
+  
   async presentToast() {
     const toast = await this.toastController.create({
       message: 'This song will be repeated',
@@ -55,9 +61,13 @@ export class PlayerModalPage implements OnInit {
     // this.scripts();
     // this.playSong();
     this.spinning = 'rotation 3s infinite linear';
-    this.start(this.track);
-    // this.resume();
+    // this.start(this.track);
+    this.resume();
     console.log(this.playlist);
+  }
+
+  backButton() {
+
   }
 
   setCurrentTrack(track) {
@@ -73,15 +83,16 @@ export class PlayerModalPage implements OnInit {
     });
   }
 
-  // resume() {
-  //   if (this.player) {
-  //     this.player.seek(this.progress);
-  //     this.player.play();
-  //     // this.start();
-  //   } else {
-  //     this.start(this.track);
-  //   }
-  // }
+  resume() {
+    if (this.player) {
+      // this.player.play();
+      this.player.seek(this.progress);
+      // this.player.play();
+      // this.start();
+    } else {
+      this.start(this.track);
+    }
+  }
   
   start(track) {
 
@@ -89,7 +100,7 @@ export class PlayerModalPage implements OnInit {
       // this.player.seek(this.progress);
       // console.log(this.player);
       // this.player.play();
-      this.player.stop();
+      this.player.unload();
     }
       this.player = new Howl({
         src: [this.track.song_url],
