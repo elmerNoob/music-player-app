@@ -1,5 +1,5 @@
 import { Track } from './../../models/track.interface';
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { HostListener, Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Platform, NavParams, ModalController, IonRange,ActionSheetController  } from '@ionic/angular';
 import { Howl } from 'howler';
 import { AudioManagement } from '@ionic-native/audio-management/ngx';
@@ -17,7 +17,7 @@ export class PlayerModalPage implements OnInit {
   @Input() track: any;
   @Input() playlist: any;
   @Input() player: any; 
-  @Input() progress: any; 
+  // @Input() progress: any; 
   
 
   // @Input() controls;
@@ -25,7 +25,7 @@ export class PlayerModalPage implements OnInit {
   activeTrack : any;
   // player: Howl = null;
   isPlaying: boolean = false;
-  // progress = 0;
+  progress = 0;
   spinning = 'none';
   prog = 0;
   currentVolume: string = "";
@@ -47,7 +47,15 @@ export class PlayerModalPage implements OnInit {
       // this.platform.backButton.subscribeWithPriority(10, () => {
       //   this.dismiss();
       // });
+  }
+  
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    console.log(event);
+    if (event.key.toLowerCase() === 'escape' || event.key.toLowerCase() === 'goback'|| event.key.toLowerCase() === 'backspace') {
+      this.dismiss();
     }
+  }
   
   async presentToast() {
     const toast = await this.toastController.create({
@@ -61,7 +69,7 @@ export class PlayerModalPage implements OnInit {
     // this.scripts();
     // this.playSong();
     this.spinning = 'rotation 3s infinite linear';
-    // this.start(this.track);
+    this.start(this.track);
     // this.resume();
     console.log(this.playlist);
   }
@@ -83,16 +91,16 @@ export class PlayerModalPage implements OnInit {
     });
   }
 
-  resume() {
-    if (this.player) {
-      // this.player.play();
-      this.player.seek(this.progress);
-      // this.player.play();
-      // this.start();
-    } else {
-      this.start(this.track);
-    }
-  }
+  // resume() {
+  //   if (this.player) {
+  //     console.log(this.player);
+  //     this.player.seek(this.progress);
+  //     // this.player.play();
+  //     // this.start();
+  //   } else {
+  //     this.start(this.track);
+  //   }
+  // }
   
   start(track) {
 
@@ -100,7 +108,7 @@ export class PlayerModalPage implements OnInit {
       // this.player.seek(this.progress);
       // console.log(this.player);
       // this.player.play();
-      this.player.unload();
+      this.player.stop();
     }
       this.player = new Howl({
         src: [this.track.song_url],
@@ -126,7 +134,7 @@ export class PlayerModalPage implements OnInit {
       this.player.play();
     
   }
-  
+
   repeatTrack() {
     // console.log('repeat');
     this.presentToast();
