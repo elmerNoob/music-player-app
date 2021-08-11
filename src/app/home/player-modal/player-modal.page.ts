@@ -1,6 +1,6 @@
 import { Track } from './../../models/track.interface';
 import { HostListener, Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { Platform, NavParams, ModalController, IonRange,ActionSheetController  } from '@ionic/angular';
+import { Platform, NavParams, ModalController, IonRange, ActionSheetController} from '@ionic/angular';
 import { Howl } from 'howler';
 import { AudioManagement } from '@ionic-native/audio-management/ngx';
 import { ToastController } from '@ionic/angular';
@@ -17,6 +17,8 @@ export class PlayerModalPage implements OnInit {
   @Input() track: any;
   @Input() playlist: any;
   @Input() player: any; 
+  @Input() playing: any;
+  @Input() countModal: any;
   // @Input() progress: any; 
   
 
@@ -30,6 +32,7 @@ export class PlayerModalPage implements OnInit {
   prog = 0;
   currentVolume: string = "";
   repeat = false;
+  resumePlayer: any;
   
   @ViewChild('range', { static: false }) range: IonRange;
   
@@ -42,10 +45,10 @@ export class PlayerModalPage implements OnInit {
     public audioman: AudioManagement,
     public toastController: ToastController,
 
-    // public platform: Platform
+    //public platform: Platform,
   ) {
       // this.platform.backButton.subscribeWithPriority(10, () => {
-      //   this.dismiss();
+      //     this.dismiss()
       // });
   }
   
@@ -71,7 +74,7 @@ export class PlayerModalPage implements OnInit {
     this.spinning = 'rotation 3s infinite linear';
     this.start(this.track);
     // this.resume();
-    console.log(this.playlist);
+    //console.log(this.playlist);
   }
 
   backButton() {
@@ -110,6 +113,27 @@ export class PlayerModalPage implements OnInit {
       // this.player.play();
       this.player.stop();
     }
+
+    if (this.playing == true){
+      console.log('true');
+      console.log(this.track.song_url);
+
+      //let duration = this.resumePlayer.duration();
+      this.resumePlayer = new Howl({
+        src: [this.track.song_url],
+        html5: true,
+        onplay: () => {
+          console.log('onplay of resumePlayer');
+          this.isPlaying = true;
+          this.activeTrack = track;
+          this.resumePlayer.seek(this.progress + 0);
+          this.updateProgress();
+        },
+      });
+
+      this.resumePlayer.play();
+
+    }else {
       this.player = new Howl({
         src: [this.track.song_url],
         html5: true,
@@ -132,6 +156,7 @@ export class PlayerModalPage implements OnInit {
       });
 
       this.player.play();
+    }
     
   }
 
@@ -189,12 +214,22 @@ export class PlayerModalPage implements OnInit {
   }
 
   updateProgress(){
-    let seek = this.player.seek();
-    this.progress = ((seek / this.player.duration()) * 100 ||0);;
+    if (this.playing == true){
+      let seek = this.resumePlayer.seek();
+      this.progress = ((seek / this.resumePlayer.duration()) * 100 ||0);;
 
-    setTimeout(()=>{
-      this.updateProgress();
-    },1000);
+      setTimeout(()=>{
+        this.updateProgress();
+      },1000);
+    } else {
+      let seek = this.player.seek();
+      this.progress = ((seek / this.player.duration()) * 100 ||0);;
+  
+      setTimeout(()=>{
+        this.updateProgress();
+      },1000);
+    }
+    
   }
 
   setCurrentVolume(){

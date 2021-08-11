@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
+import { componentFactoryName } from '@angular/compiler';
 import { Component, OnInit , ViewChild, ElementRef} from '@angular/core';
 import { IonRange } from '@ionic/angular';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { Howl } from 'howler';
 import { Observable } from 'rxjs';
 import { Track } from './../../models/track.interface';
@@ -20,7 +21,7 @@ export class MainPage implements OnInit {
   constructor(
     public modalController: ModalController,
     private elementRef: ElementRef,
-    public http: HttpClient,
+    public http: HttpClient
   ) { 
     this.getTracks();
   }
@@ -64,6 +65,7 @@ export class MainPage implements OnInit {
   ];
 
   track : any;
+  counter: number = 1;
   isReturn: boolean = false;
 
   ngOnInit():void {
@@ -72,20 +74,22 @@ export class MainPage implements OnInit {
   somethingsPlaying = false;
   fromModal = null;
   progress = 0;
+
   async presentModal(track: Track) {
     if (this.fromModal == null) {
       this.fromModal = null;
     } else {
       this.fromModal = this.fromModal;
     }
-
+    
     const modal = await this.modalController.create({
       component: PlayerModalPage,
       componentProps: {
         'track': track,
         'playlist': this.tracks,
         'player': this.fromModal,
-        'progress': this.progress
+        'progress': this.progress,
+        'playing': this.somethingsPlaying
       }
     });
 
@@ -97,7 +101,10 @@ export class MainPage implements OnInit {
         this.somethingsPlaying = data['data'].trackPlaying;
         this.fromModal = data['data'].play;
         this.progress = data['data'].prog;
+        this.counter = this.counter + 1;
         console.log(this.progress);
+        console.log(this.somethingsPlaying);
+        console.log(this.track);
     });
 
     return await modal.present();
