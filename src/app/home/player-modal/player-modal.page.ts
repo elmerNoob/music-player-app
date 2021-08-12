@@ -4,6 +4,7 @@ import { Platform, NavParams, ModalController, IonRange, ActionSheetController} 
 import { Howl } from 'howler';
 import { AudioManagement } from '@ionic-native/audio-management/ngx';
 import { ToastController } from '@ionic/angular';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 // import * as $ from "jquery";
 declare var playSample;
@@ -18,7 +19,6 @@ export class PlayerModalPage implements OnInit {
   @Input() playlist: any;
   @Input() player: any; 
   @Input() playing: any;
-  @Input() countModal: any;
   // @Input() progress: any; 
   
 
@@ -32,7 +32,8 @@ export class PlayerModalPage implements OnInit {
   prog = 0;
   currentVolume: string = "";
   repeat = false;
-  resumePlayer: any;
+  trackID = 0;
+
   
   @ViewChild('range', { static: false }) range: IonRange;
   
@@ -52,13 +53,13 @@ export class PlayerModalPage implements OnInit {
       // });
   }
   
-  @HostListener('window:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
-    console.log(event);
-    if (event.key.toLowerCase() === 'escape' || event.key.toLowerCase() === 'goback'|| event.key.toLowerCase() === 'backspace') {
-      this.dismiss();
-    }
-  }
+  // @HostListener('window:keydown', ['$event'])
+  // keyEvent(event: KeyboardEvent) {
+  //   console.log(event);
+  //   if (event.key.toLowerCase() === 'escape' || event.key.toLowerCase() === 'goback'|| event.key.toLowerCase() === 'backspace') {
+  //     this.dismiss();
+  //   }
+  // }
   
   async presentToast() {
     const toast = await this.toastController.create({
@@ -77,27 +78,31 @@ export class PlayerModalPage implements OnInit {
     //console.log(this.playlist);
   }
 
-  backButton() {
-
-  }
-
   setCurrentTrack(track) {
     this.activeTrack = track;
   }​
 
   dismiss() {
+    // if (this.playing == true) {
+    //   this.isPlaying = false;
+    //   this.player.stop();
+    // }
     this.modalController.dismiss({
       track: this.activeTrack,
       trackPlaying: this.isPlaying,
       play: this.player,
-      prog: this.progress
+      prog: this.progress,
+      id: this.trackID
     });
   }
 
   // resume() {
-  //   if (this.player) {
-  //     console.log(this.player);
-  //     this.player.seek(this.progress);
+  //   let duration = this.player.duration();
+  //   if (this.player != null) {
+  //     this.player.seek(this.progress * duration);
+  //     this.player.play();
+  //     //console.log(this.player);
+  //     //this.player.seek(this.progress);
   //     // this.player.play();
   //     // this.start();
   //   } else {
@@ -106,57 +111,44 @@ export class PlayerModalPage implements OnInit {
   // }
   
   start(track) {
-
+    this.trackID = track.album_id;
+    //console.log(this.trackID);
+    
     if (this.player) {
       // this.player.seek(this.progress);
       // console.log(this.player);
       // this.player.play();
       this.player.stop();
+      
     }
 
-    if (this.playing == true){
-      console.log('true');
-      console.log(this.track.song_url);
-
-      //let duration = this.resumePlayer.duration();
-      this.resumePlayer = new Howl({
-        src: [this.track.song_url],
-        html5: true,
-        onplay: () => {
-          console.log('onplay of resumePlayer');
-          this.isPlaying = true;
-          this.activeTrack = track;
-          this.resumePlayer.seek(this.progress + 0);
-          this.updateProgress();
-        },
-      });
-
-      this.resumePlayer.play();
-
-    }else {
-      this.player = new Howl({
-        src: [this.track.song_url],
-        html5: true,
-        onplay: () => {
-          console.log('onplay');
-          this.isPlaying = true;
-          this.activeTrack = track;
-          this.updateProgress();
-        },
-        onend: () => {
-          console.log('finished');
-          console.log(this.repeat);
-          if (this.repeat == true) {
-            this.start(this.track);
-            this.repeat = false;
-          } else {
-            this.next();
-          }
+    this.player = new Howl({
+      src: [this.track.song_url],
+      html5: true,
+      onplay: () => {
+        console.log('onplay');
+        this.isPlaying = true;
+        this.activeTrack = track;
+        //this.trackID = track.album_id;
+        //console.log(this.trackID)
+        if (this.activeTrack != this.player){
+          this.player.seek(this.player.duration() - this.progress)
         }
-      });
-
-      this.player.play();
-    }
+        this.updateProgress();
+       },
+       onend: () => {
+        console.log('finished');
+        console.log(this.repeat);
+        if (this.repeat == true) {
+          this.start(this.track);
+          this.repeat = false;
+        } else {
+          this.next();
+        }
+      }
+     });
+    
+    this.player.play();
     
   }
 
@@ -214,22 +206,12 @@ export class PlayerModalPage implements OnInit {
   }
 
   updateProgress(){
-    if (this.playing == true){
-      let seek = this.resumePlayer.seek();
-      this.progress = ((seek / this.resumePlayer.duration()) * 100 ||0);;
-
-      setTimeout(()=>{
-        this.updateProgress();
-      },1000);
-    } else {
-      let seek = this.player.seek();
-      this.progress = ((seek / this.player.duration()) * 100 ||0);;
+    let seek = this.player.seek();
+    this.progress = ((seek / this.player.duration()) * 100 ||0);;
   
-      setTimeout(()=>{
-        this.updateProgress();
-      },1000);
-    }
-    
+    setTimeout(()=>{
+      this.updateProgress();
+    },1000);  
   }
 
   setCurrentVolume(){

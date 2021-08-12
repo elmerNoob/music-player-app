@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { componentFactoryName } from '@angular/compiler';
-import { Component, OnInit , ViewChild, ElementRef} from '@angular/core';
+import { Component, OnInit , ViewChild, ElementRef, HostListener} from '@angular/core';
 import { IonRange } from '@ionic/angular';
 import { ModalController, Platform } from '@ionic/angular';
 import { Howl } from 'howler';
 import { Observable } from 'rxjs';
+import { LoginPage } from 'src/app/login/login.page';
 import { Track } from './../../models/track.interface';
 import { PlayerModalPage } from './../player-modal/player-modal.page';
 
@@ -25,6 +26,15 @@ export class MainPage implements OnInit {
   ) { 
     this.getTracks();
   }
+
+  // @HostListener('window:keydown', ['$event'])
+  // keyEvent(event: KeyboardEvent) {
+  //   console.log(event);
+  //   if (event.key.toLowerCase() === 'escape' || event.key.toLowerCase() === 'goback'|| event.key.toLowerCase() === 'backspace') {
+  //     this.somethingsPlaying = false;
+  //     this.track = null
+  //   }
+  // }
 
   getTracks(){
     let url = 'http://107.191.98.73/fetch_audio/index.php';
@@ -65,10 +75,11 @@ export class MainPage implements OnInit {
   ];
 
   track : any;
-  counter: number = 1;
+  trackID = 0;
   isReturn: boolean = false;
 
-  ngOnInit():void {
+  ngOnInit() {
+    
   }
 
   somethingsPlaying = false;
@@ -81,7 +92,7 @@ export class MainPage implements OnInit {
     } else {
       this.fromModal = this.fromModal;
     }
-    
+
     const modal = await this.modalController.create({
       component: PlayerModalPage,
       componentProps: {
@@ -89,7 +100,7 @@ export class MainPage implements OnInit {
         'playlist': this.tracks,
         'player': this.fromModal,
         'progress': this.progress,
-        'playing': this.somethingsPlaying
+        'playing': this.isReturn
       }
     });
 
@@ -101,10 +112,12 @@ export class MainPage implements OnInit {
         this.somethingsPlaying = data['data'].trackPlaying;
         this.fromModal = data['data'].play;
         this.progress = data['data'].prog;
-        this.counter = this.counter + 1;
+        this.trackID = data['data'].id;
         console.log(this.progress);
         console.log(this.somethingsPlaying);
         console.log(this.track);
+        console.log(this.fromModal);
+        console.log(this.trackID)
     });
 
     return await modal.present();
