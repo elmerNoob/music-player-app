@@ -21,9 +21,17 @@ export class MainPage implements OnInit {
   constructor(
     public modalController: ModalController,
     private elementRef: ElementRef,
-    public http: HttpClient
+    public http: HttpClient,
+    private platform: Platform,
+    // public playerModal: PlayerModalPage
+
   ) { 
     this.getTracks();
+    // this.platform.backButton.subscribeWithPriority(999, () => {
+    //   // this.modalController.dismiss();
+    //   // this.playerModal.dismiss();
+    //   // document.write('Hello1');
+    // });
   }
 
   getTracks(){
@@ -73,14 +81,10 @@ export class MainPage implements OnInit {
 
   somethingsPlaying = false;
   fromModal = null;
-  progress = 0;
+  progresses = 0;
 
   async presentModal(track: Track) {
-    if (this.fromModal == null) {
-      this.fromModal = null;
-    } else {
-      this.fromModal = this.fromModal;
-    }
+
     
     const modal = await this.modalController.create({
       component: PlayerModalPage,
@@ -88,7 +92,7 @@ export class MainPage implements OnInit {
         'track': track,
         'playlist': this.tracks,
         'player': this.fromModal,
-        'progress': this.progress,
+        'progress': this.progresses,
         'playing': this.somethingsPlaying
       }
     });
@@ -100,11 +104,9 @@ export class MainPage implements OnInit {
         this.track = data['data'].track;
         this.somethingsPlaying = data['data'].trackPlaying;
         this.fromModal = data['data'].play;
-        this.progress = data['data'].prog;
-        this.counter = this.counter + 1;
-        console.log(this.progress);
-        console.log(this.somethingsPlaying);
-        console.log(this.track);
+        this.progresses = data['data'].prog;
+        // this.counter = this.counter + 1;
+        console.log(this.progresses);
     });
 
     return await modal.present();

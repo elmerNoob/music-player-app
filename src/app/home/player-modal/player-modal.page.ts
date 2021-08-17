@@ -1,10 +1,9 @@
 import { Track } from './../../models/track.interface';
 import { HostListener, Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { Platform, NavParams, ModalController, IonRange, ActionSheetController} from '@ionic/angular';
+import { Platform, NavParams, ModalController, IonRange,ActionSheetController  } from '@ionic/angular';
 import { Howl } from 'howler';
 import { AudioManagement } from '@ionic-native/audio-management/ngx';
 import { ToastController } from '@ionic/angular';
-
 // import * as $ from "jquery";
 declare var playSample;
 @Component({
@@ -17,10 +16,9 @@ export class PlayerModalPage implements OnInit {
   @Input() track: any;
   @Input() playlist: any;
   @Input() player: any; 
-  @Input() playing: any;
-  @Input() countModal: any;
+  @Input() progresses: any; 
   // @Input() progress: any; 
-  
+
 
   // @Input() controls;
   // @Input() spectrum;
@@ -32,7 +30,6 @@ export class PlayerModalPage implements OnInit {
   prog = 0;
   currentVolume: string = "";
   repeat = false;
-  resumePlayer: any;
   
   @ViewChild('range', { static: false }) range: IonRange;
   
@@ -44,22 +41,21 @@ export class PlayerModalPage implements OnInit {
     public actionSheetController: ActionSheetController,
     public audioman: AudioManagement,
     public toastController: ToastController,
-
-    //public platform: Platform,
+    private platform: Platform
   ) {
-      // this.platform.backButton.subscribeWithPriority(10, () => {
-      //     this.dismiss()
-      // });
+      this.platform.backButton.subscribeWithPriority(999, () => {
+        this.dismiss();
+      });
   }
-  
+
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    console.log(event);
+    document.write(event.key);
     if (event.key.toLowerCase() === 'escape' || event.key.toLowerCase() === 'goback'|| event.key.toLowerCase() === 'backspace') {
       this.dismiss();
     }
   }
-  
+
   async presentToast() {
     const toast = await this.toastController.create({
       message: 'This song will be repeated',
@@ -67,24 +63,22 @@ export class PlayerModalPage implements OnInit {
     });
     toast.present();
   }
-
   ngOnInit() {
     // this.scripts();
     // this.playSong();
     this.spinning = 'rotation 3s infinite linear';
-    this.start(this.track);
-    // this.resume();
-    //console.log(this.playlist);
+    // this.start(this.track);
+    this.resume();
+    console.log(this.playlist);
   }
+
+
 
   backButton() {
-
   }
-
   setCurrentTrack(track) {
     this.activeTrack = track;
   }​
-
   dismiss() {
     this.modalController.dismiss({
       track: this.activeTrack,
@@ -94,17 +88,18 @@ export class PlayerModalPage implements OnInit {
     });
   }
 
-  // resume() {
-  //   if (this.player) {
-  //     console.log(this.player);
-  //     this.player.seek(this.progress);
-  //     // this.player.play();
-  //     // this.start();
-  //   } else {
-  //     this.start(this.track);
-  //   }
-  // }
-  
+  resume() {
+    if (this.player) {
+      // this.player.play();
+      this.player.seek(this.progresses);
+      // this.activeTrack = 
+      // this.player.play();
+      // this.start();
+    } else {
+      this.start(this.track);
+    }
+  }
+
   start(track) {
 
     if (this.player) {
@@ -112,28 +107,8 @@ export class PlayerModalPage implements OnInit {
       // console.log(this.player);
       // this.player.play();
       this.player.stop();
+      // this.player.unload();
     }
-
-    if (this.playing == true){
-      console.log('true');
-      console.log(this.track.song_url);
-
-      //let duration = this.resumePlayer.duration();
-      this.resumePlayer = new Howl({
-        src: [this.track.song_url],
-        html5: true,
-        onplay: () => {
-          console.log('onplay of resumePlayer');
-          this.isPlaying = true;
-          this.activeTrack = track;
-          this.resumePlayer.seek(this.progress + 0);
-          this.updateProgress();
-        },
-      });
-
-      this.resumePlayer.play();
-
-    }else {
       this.player = new Howl({
         src: [this.track.song_url],
         html5: true,
@@ -154,11 +129,10 @@ export class PlayerModalPage implements OnInit {
           }
         }
       });
-
       this.player.play();
-    }
-    
+
   }
+  
 
   repeatTrack() {
     // console.log('repeat');
@@ -166,11 +140,9 @@ export class PlayerModalPage implements OnInit {
     this.repeat = true;
     
   }
-
   togglePlayer(pause){
     
     this.isPlaying = !pause;
-
     if(pause){
       this.player.pause();
       this.spinning = 'none';
@@ -179,9 +151,7 @@ export class PlayerModalPage implements OnInit {
       this.player.play();
       this.spinning = 'rotation 3s infinite linear';
     }
-
   }
-
   next(){
     let index = this.playlist.indexOf(this.activeTrack);
     if(index != this.playlist.length - 1){
@@ -192,7 +162,6 @@ export class PlayerModalPage implements OnInit {
       this.start(this.track);
     }
   }
-
   prev(){
     let index = this.playlist.indexOf(this.activeTrack);
     if(index > 0){
@@ -206,38 +175,23 @@ export class PlayerModalPage implements OnInit {
     }
       
   }
-
   seek(){
     let newValue = +this.range.value / 100;
     let duration = this.player.duration();
     this.player.seek(duration * newValue);
   }
-
   updateProgress(){
-    if (this.playing == true){
-      let seek = this.resumePlayer.seek();
-      this.progress = ((seek / this.resumePlayer.duration()) * 100 ||0);;
-
-      setTimeout(()=>{
-        this.updateProgress();
-      },1000);
-    } else {
-      let seek = this.player.seek();
-      this.progress = ((seek / this.player.duration()) * 100 ||0);;
-  
-      setTimeout(()=>{
-        this.updateProgress();
-      },1000);
-    }
-    
+    let seek = this.player.seek();
+    this.progress = ((seek / this.player.duration()) * 100 ||0);;
+    setTimeout(()=>{
+      this.updateProgress();
+    },1000);
   }
-
   setCurrentVolume(){
     this.audioman.getMaxVolume(AudioManagement.VolumeType.MUSIC).then(
       (maxVolume) => {
         this.audioman.setVolume(AudioManagement.VolumeType.MUSIC, maxVolume.maxVolume/2).then(
           () => {
-
           },(err) => {
             alert(JSON.stringify(err));
           }
@@ -247,7 +201,6 @@ export class PlayerModalPage implements OnInit {
       }
     )
   }
-
   async presentActionSheet() {
     const actionSheet = await this.actionSheetController.create({
       header: `${this.track.album_name} - ${this.track.album_name}`,
@@ -287,7 +240,6 @@ export class PlayerModalPage implements OnInit {
     });
     await actionSheet.present();
   }
-
   // addJsToElement(src: string): HTMLScriptElement {
   //   const script = document.createElement('script');
   //   script.type = 'text/javascript';
@@ -301,5 +253,4 @@ export class PlayerModalPage implements OnInit {
   //   this.addJsToElement('assets/js/id3-minimized.js').onload = () => {};
   //   this.addJsToElement('assets/js/audiovisualisierung.js').onload = () => {};
   // }
-
 }
